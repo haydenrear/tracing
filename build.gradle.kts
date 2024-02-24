@@ -8,8 +8,6 @@ plugins {
 
 tasks.register("prepareKotlinBuildScriptModel")
 
-
-
 dependencies {
 	implementation("io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.1.0-alpha")
 	implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.1.0")
@@ -27,7 +25,6 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.liquibase:liquibase-core")
 
-
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
 	runtimeOnly("org.postgresql:postgresql")
@@ -39,6 +36,16 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 
 	implementation(project(":utilitymodule"))
+
+	annotationProcessor(project(":tracing_apt")) {
+		exclude("org.junit")
+	}
+	testAnnotationProcessor(project(":tracing_apt")) {
+		exclude("org.junit")
+	}
+	api(project(":tracing_apt")) {
+		exclude("org.junit")
+	}
 }
 
 
@@ -59,3 +66,4 @@ tasks.withType<Test> {
 	dependsOn("copyAgent")
 	jvmArgs("-javaagent:build/agent/opentelemetry-javaagent.jar")
 }
+

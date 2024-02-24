@@ -3,7 +3,7 @@ package com.hayden.tracing
 import com.hayden.tracing.config.ITracingInterceptor
 import com.hayden.tracing.config.TracingAutoConfiguration
 import com.hayden.tracing.model.*
-import com.hayden.tracing.observation_aspects.Cdc
+import com.hayden.tracing.observation_aspects.AnnotationRegistrarObservabilityUtility
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.LoggerFactory
@@ -38,8 +38,9 @@ open class TracingApplicationTests {
 			Trace(
 				Instant.now(),
 				MessageMetadata(TraceMetadata(ServiceIds("one", "two")), LogType.MESSAGE),
-				Message(mutableMapOf(Pair("one", "two")) as Map<String, *>, "one-two")
-			), 3, 0);
+				Message(mutableMapOf(Pair("one", "two")) as Map<String, *>, "one-two"),
+
+			), 3, 0, AnnotationRegistrarObservabilityUtility());
 		println(extracted.toString())
 
 		log?.info("hello!")
@@ -50,7 +51,6 @@ open class TracingApplicationTests {
 	}
 
 //	@WithSpan(value = "call-this")
-	@Cdc(messageId = "hello")
 	public open fun callThis() {
 	}
 

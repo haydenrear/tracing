@@ -1,6 +1,6 @@
 package com.hayden.tracing.config
 
-import com.hayden.tracing.observation_aspects.ObservabilityUtility
+import com.hayden.tracing.observation_aspects.AnnotationRegistrarObservabilityUtility
 import com.hayden.tracing.props.TracingConfigurationProperties
 import io.micrometer.observation.ObservationRegistry
 import io.opentelemetry.exporter.logging.LoggingSpanExporter
@@ -15,7 +15,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy
 
 
 @Configuration
-@ComponentScan(basePackageClasses = [ObservabilityUtility::class, TracingInterceptor::class])
+@ComponentScan(basePackageClasses = [AnnotationRegistrarObservabilityUtility::class, TracingInterceptor::class])
 @EnableConfigurationProperties(TracingConfigurationProperties::class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 open class TracingAutoConfiguration {
