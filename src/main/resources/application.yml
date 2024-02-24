@@ -1,0 +1,17 @@
+otel:
+  resource:
+    attributes:
+      test: env
+  springboot:
+    web:
+      enabled: false
+trace:
+  service-id: tracer
+  service-instance-id: tracer
+spring:
+  aop:
+    proxy-target-class: true
+    auto: true
+
+scanning.observability.aspect: "* *.*.*"
+logging.level.org.springframework.aop: DEBUG
