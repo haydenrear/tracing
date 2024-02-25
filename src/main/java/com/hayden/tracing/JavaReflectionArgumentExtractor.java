@@ -3,6 +3,7 @@ package com.hayden.tracing;
 import com.hayden.tracing.observation_aspects.ArgumentExtractor;
 import com.hayden.tracing.observation_aspects.AnnotationRegistrarObservabilityUtility;
 import com.hayden.utilitymodule.MapFunctions;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +20,7 @@ public class JavaReflectionArgumentExtractor implements ArgumentExtractor {
 
     @NotNull
     @Override
-    public Map<String, Object> extract(@NotNull ProceedingJoinPoint proceeding,
+    public Map<String, Object> extract(@NotNull JoinPoint proceeding,
                                        @NotNull AnnotationRegistrarObservabilityUtility utility) {
         if (utility.matchers().stream().anyMatch(u -> u.matches(proceeding)))
             return MapFunctions.CollectMap(

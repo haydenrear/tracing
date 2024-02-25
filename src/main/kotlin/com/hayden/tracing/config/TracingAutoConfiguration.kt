@@ -2,6 +2,7 @@ package com.hayden.tracing.config
 
 import com.hayden.tracing.observation_aspects.AnnotationRegistrarObservabilityUtility
 import com.hayden.tracing.props.TracingConfigurationProperties
+import io.micrometer.context.ContextRegistry
 import io.micrometer.observation.ObservationRegistry
 import io.opentelemetry.exporter.logging.LoggingSpanExporter
 import io.opentelemetry.exporter.otlp.http.logs.OtlpHttpLogRecordExporter

@@ -15,6 +15,7 @@ dependencies {
 	implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.1.0")
 	implementation("io.opentelemetry.javaagent:opentelemetry-javaagent:2.0.0")
 	implementation("io.opentelemetry.instrumentation:opentelemetry-jdbc:2.1.0-alpha")
+	implementation("io.micrometer:context-propagation:1.1.1")
 
 	implementation("io.micrometer:micrometer-tracing-bridge-brave")
 
