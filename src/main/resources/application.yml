@@ -1,10 +1,10 @@
-otel:
-  resource:
-    attributes:
-      test: env
-  springboot:
-    web:
-      enabled: false
+otel.exporter.otlp.endpoint: http://localhost:4318/v1/traces
+#  resource:
+#    attributes:
+#      test: env
+#  springboot:
+#    web:
+#      enabled: false
 trace:
   service-id: tracer
   service-instance-id: tracer
@@ -12,6 +12,23 @@ spring:
   aop:
     proxy-target-class: true
     auto: true
+  docker:
+    compose:
+      skip:
+        in-tests: false
+      file: src/main/docker/integration_test/docker-compose.yml
+      lifecycle-management: start_only
+      readiness:
+        wait: never
 
-scanning.observability.aspect: "* *.*.*"
+
+
+#scanning.observability.aspect: "* *.*.*"
 logging.level.org.springframework.aop: DEBUG
+management:
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces
+    metrics:
+      export:
+        url: http://localhost:4318/v1/traces

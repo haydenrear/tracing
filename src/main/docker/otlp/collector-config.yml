@@ -1,0 +1,25 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+exporters:
+  debug:
+    verbosity: detailed
+  otlp/jaeger:
+    endpoint: "jaeger-container:14250"  # Replace with your Jaeger endpoint
+    tls:
+      insecure: true   # Optional, if Jaeger doesn't use TLS
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [debug, otlp/jaeger]
+    metrics:
+      receivers: [otlp]
+      exporters: [debug, otlp/jaeger]
+    logs:
+      receivers: [otlp]
+      exporters: [debug, otlp/jaeger]

@@ -9,6 +9,7 @@ plugins {
 tasks.register("prepareKotlinBuildScriptModel")
 
 dependencies {
+	implementation("org.springframework.boot:spring-boot-docker-compose")
 	implementation("io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.1.0-alpha")
 	implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.1.0")
 	implementation("io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter:1.22.1-alpha")
@@ -18,6 +19,9 @@ dependencies {
 	implementation("io.micrometer:context-propagation:1.1.1")
 
 	implementation("io.micrometer:micrometer-tracing-bridge-brave")
+	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
+	runtimeOnly("io.micrometer:micrometer-core")
+	runtimeOnly("io.micrometer:micrometer-registry-otlp")
 
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
@@ -27,7 +31,6 @@ dependencies {
 	implementation("org.liquibase:liquibase-core")
 
 	compileOnly("org.projectlombok:lombok")
-	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
 	runtimeOnly("org.postgresql:postgresql")
 
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
@@ -60,11 +63,13 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<JavaExec> {
 	dependsOn("copyAgent")
-	jvmArgs("-javaagent:build/agent/opentelemetry-javaagent.jar")
+	jvmArgs("-javaagent:build/agent/opentelemetry-javaagent.jar",
+		"-Dotel.javaagent.configuration-file=src/main/resources/otel/otel.properties")
 }
 
 tasks.withType<Test> {
 	dependsOn("copyAgent")
-	jvmArgs("-javaagent:build/agent/opentelemetry-javaagent.jar")
+	jvmArgs("-javaagent:build/agent/opentelemetry-javaagent.jar",
+		"-Dotel.javaagent.configuration-file=src/main/resources/otel/otel.properties")
 }
 

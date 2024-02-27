@@ -1,0 +1,14 @@
+receivers:
+  jaeger:
+    host: "localhost" # Replace with your Jaeger instance host if different
+    port: 14268     # Jaeger receiving port (default for OTLP)
+
+exporters:
+  jaeger:
+    endpoint: "http://localhost:14268/api/traces" # Jaeger ingest endpoint
+
+service:
+  extensions:
+    jaeger: # Enables Jaeger exporter extension
+      grpc: # Optional, enable gRPC receiver (default is HTTP)
+        endpoint: "localhost:14268"
