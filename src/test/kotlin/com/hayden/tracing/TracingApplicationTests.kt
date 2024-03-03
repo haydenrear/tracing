@@ -5,6 +5,7 @@ import com.hayden.tracing.config.TracingAutoConfiguration
 import com.hayden.tracing.model.*
 import com.hayden.tracing.observation_aspects.AnnotationRegistrarObservabilityUtility
 import com.hayden.tracing.props.TracingConfigurationProperties
+import com.hayden.tracing_agent.TracingAgent
 import com.hayden.tracing_apt.Logged
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
 import io.opentelemetry.instrumentation.annotations.WithSpan

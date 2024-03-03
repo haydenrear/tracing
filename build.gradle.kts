@@ -40,6 +40,7 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 
 	implementation(project(":utilitymodule"))
+	implementation(project(":tracing_agent"))
 
 	annotationProcessor(project(":tracing_apt")) {
 		exclude("org.junit")
@@ -63,13 +64,21 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<JavaExec> {
 	dependsOn("copyAgent")
-	jvmArgs("-javaagent:build/agent/opentelemetry-javaagent.jar",
-		"-Dotel.javaagent.configuration-file=src/main/resources/otel/otel.properties")
+	dependsOn("dynamicTracingAgent")
+	jvmArgs(
+		"-javaagent:build/agent/opentelemetry-javaagent.jar",
+		"-Dotel.javaagent.configuration-file=src/main/resources/otel/otel.properties",
+		"-javaagent:build/dynamic_agent/tracing_agent.jar"
+	)
 }
 
 tasks.withType<Test> {
 	dependsOn("copyAgent")
-	jvmArgs("-javaagent:build/agent/opentelemetry-javaagent.jar",
-		"-Dotel.javaagent.configuration-file=src/main/resources/otel/otel.properties")
+	dependsOn("dynamicTracingAgent")
+	jvmArgs(
+		"-javaagent:build/agent/opentelemetry-javaagent.jar",
+		"-Dotel.javaagent.configuration-file=src/main/resources/otel/otel.properties",
+		"-javaagent:build/dynamic_agent/tracing_agent.jar"
+	)
 }
 
