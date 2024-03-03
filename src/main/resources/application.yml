@@ -29,6 +29,7 @@ management:
   otlp:
     tracing:
       endpoint: http://localhost:4318/v1/traces
-    metrics:
-      export:
-        url: http://localhost:4318/v1/traces
+
+
+tracing-agent:
+  size: 10

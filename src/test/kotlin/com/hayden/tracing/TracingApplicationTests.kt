@@ -2,13 +2,12 @@ package com.hayden.tracing
 
 import com.hayden.tracing.config.ITracingInterceptor
 import com.hayden.tracing.config.TracingAutoConfiguration
-import com.hayden.tracing.model.*
-import com.hayden.tracing.observation_aspects.AnnotationRegistrarObservabilityUtility
 import com.hayden.tracing.props.TracingConfigurationProperties
-import com.hayden.tracing_agent.TracingAgent
-import com.hayden.tracing_apt.Logged
+import io.opentelemetry.api.trace.SpanBuilder
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
 import io.opentelemetry.instrumentation.annotations.WithSpan
+import io.opentelemetry.sdk.trace.SdkTracerProvider
+import io.opentelemetry.sdk.trace.export.BatchSpanProcessor
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.LoggerFactory
@@ -16,14 +15,9 @@ import org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProx
 import org.springframework.aop.aspectj.autoproxy.AspectJAwareAdvisorAutoProxyCreator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.EnableConfigurationProperties
-import org.springframework.boot.docker.compose.core.RunningService
-import org.springframework.boot.docker.compose.lifecycle.DockerComposeServicesReadyEvent
-import org.springframework.boot.docker.compose.service.connection.DockerComposeConnectionSource
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.EnableAspectJAutoProxy
-import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.time.Instant
 
 @SpringBootTest(classes = [
 	TracingAutoConfiguration::class,
@@ -43,6 +37,11 @@ open class TracingApplicationTests {
 	@Autowired
 	lateinit var span: OtlpHttpSpanExporter;
 
+	@Autowired
+	lateinit var otelSpanProcessor: BatchSpanProcessor
+	@Autowired
+	lateinit var sdkTracerProvider: SdkTracerProvider
+
 
 	@Test
 	fun contextLoads() {
@@ -58,14 +57,23 @@ open class TracingApplicationTests {
 
 		log?.info("hello!")
 		for (i in 1..10) {
-			callThis()
-			tracingConfigurationProperties.test()
+//			callThis()
+			doCall()
+			otelSpanProcessor.forceFlush()
+			sdkTracerProvider.forceFlush()
 		}
+		otelSpanProcessor.forceFlush()
+		sdkTracerProvider.forceFlush()
+		Thread.sleep(5000)
+	}
+
+	private fun doCall() {
+		tracingConfigurationProperties.doTestValue()
 	}
 
 	@WithSpan(value = "call-this")
 	public open fun callThis() {
-
+		val s: SpanBuilder
 	}
 
 }
