@@ -1,49 +1,75 @@
 package com.hayden.tracing.config
 
+import com.hayden.tracing.handler.DelegatingCdcObservationHandler
 import com.hayden.tracing.observation_aspects.AnnotationRegistrarObservabilityUtility
 import com.hayden.tracing.props.TracingConfigurationProperties
+import com.hayden.tracing.repository.EventRepository
 import io.micrometer.observation.ObservationRegistry
-import io.micrometer.tracing.exporter.SpanExportingPredicate
-import io.micrometer.tracing.exporter.SpanFilter
-import io.micrometer.tracing.exporter.SpanReporter
-import io.micrometer.tracing.handler.DefaultTracingObservationHandler
-import io.micrometer.tracing.otel.bridge.CompositeSpanExporter
-import io.micrometer.tracing.otel.bridge.OtelTracer
-import io.opentelemetry.api.baggage.propagation.W3CBaggagePropagator
 import io.opentelemetry.api.common.Attributes
-import io.opentelemetry.api.metrics.MeterProvider
-import io.opentelemetry.context.propagation.ContextPropagators
-import io.opentelemetry.context.propagation.TextMapPropagator
 import io.opentelemetry.exporter.logging.LoggingSpanExporter
 import io.opentelemetry.exporter.otlp.http.logs.OtlpHttpLogRecordExporter
 import io.opentelemetry.exporter.otlp.http.metrics.OtlpHttpMetricExporter
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
-import io.opentelemetry.extension.trace.propagation.OtTracePropagator
 import io.opentelemetry.sdk.resources.Resource
-import io.opentelemetry.sdk.trace.export.BatchSpanProcessor
-import org.springframework.beans.factory.ObjectProvider
-import org.springframework.boot.CommandLineRunner
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.autoconfigure.tracing.SpanExporters
+import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
+import org.springframework.boot.autoconfigure.data.jdbc.JdbcRepositoriesAutoConfiguration
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
+import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
+import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.EnableAspectJAutoProxy
-import org.springframework.context.annotation.Primary
-import java.time.Duration
+import org.springframework.context.annotation.*
+import org.springframework.data.jdbc.core.convert.*
+import org.springframework.data.jdbc.core.mapping.JdbcMappingContext
+import org.springframework.data.relational.core.dialect.Dialect
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
 
 
-@Configuration
+@AutoConfiguration
 @ImportAutoConfiguration(value=[
     org.springframework.boot.actuate.autoconfigure.tracing.OpenTelemetryAutoConfiguration::class,
-    io.opentelemetry.instrumentation.spring.autoconfigure.OpenTelemetryAutoConfiguration::class
+    io.opentelemetry.instrumentation.spring.autoconfigure.OpenTelemetryAutoConfiguration::class,
+    LiquibaseAutoConfiguration::class,
+    DataSourceTransactionManagerAutoConfiguration::class,
+    DataSourceAutoConfiguration::class,
+    JdbcTemplateAutoConfiguration::class,
+    JdbcRepositoriesAutoConfiguration::class
 ])
-@ComponentScan(basePackageClasses = [AnnotationRegistrarObservabilityUtility::class, TracingInterceptor::class])
+@ComponentScan(basePackageClasses = [
+    AnnotationRegistrarObservabilityUtility::class,
+    TracingInterceptor::class,
+    DelegatingCdcObservationHandler::class,
+    EventRepository::class
+])
 @EnableConfigurationProperties(TracingConfigurationProperties::class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 open class TracingAutoConfiguration {
 
+    companion object {
+        val log: Logger = LoggerFactory.getLogger(TracingAutoConfiguration::class.java.name)
+    }
+
+    @Bean
+    @Primary
+    open fun dataAccessStrategy(operations: NamedParameterJdbcOperations,
+                                jdbcConverter: JdbcConverter,
+                                context: JdbcMappingContext,
+                                dialect: Dialect): DataAccessStrategy {
+        val sqlGeneratorSource = SqlGeneratorSource(context,
+            jdbcConverter, dialect);
+        val factory  = DataAccessStrategyFactory(
+            sqlGeneratorSource,
+            jdbcConverter,
+            operations,
+            SqlParametersFactoryImpl(context, jdbcConverter),
+            InsertStrategyFactory(operations, dialect));
+
+        return factory.create();
+    }
 
     @Bean
     open fun httpSpanExporter(): OtlpHttpSpanExporter {
@@ -79,8 +105,9 @@ open class TracingAutoConfiguration {
 
     @Bean
     open fun resource(attributes: List<Attributes>): Resource {
-        val attributesBuilder = Attributes.builder();
+        val attributesBuilder = Attributes.builder()
         attributes.stream()
+            .peek { log.info("Creating resource by adding attributes {}", it.asMap()) }
             .forEach { attributesBuilder.putAll(it) }
 
         return Resource.create(attributesBuilder.build())
@@ -92,18 +119,9 @@ open class TracingAutoConfiguration {
     }
 
     @Bean
-    open fun contextPropagators(): ContextPropagators {
-        return ContextPropagators.create(
-            TextMapPropagator.composite(
-                W3CBaggagePropagator.getInstance(),
-                OtTracePropagator.getInstance()
-        ))
-    }
-
-    @Bean
-    open fun observationRegistry(otelTracer: OtelTracer): ObservationRegistry {
+    open fun observationRegistry(delegating: DelegatingCdcObservationHandler): ObservationRegistry {
         val create = ObservationRegistry.create()
-        create.observationConfig().observationHandler(DefaultTracingObservationHandler(otelTracer))
+        create.observationConfig().observationHandler(delegating)
         return create
     }
 

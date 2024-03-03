@@ -1,5 +1,6 @@
 package com.hayden.tracing
 
+import com.hayden.tracing.config.DatabaseConfiguration
 import com.hayden.tracing.config.ITracingInterceptor
 import com.hayden.tracing.config.TracingAutoConfiguration
 import com.hayden.tracing.props.TracingConfigurationProperties
@@ -8,6 +9,7 @@ import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.opentelemetry.sdk.trace.SdkTracerProvider
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor
+import liquibase.Liquibase
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.LoggerFactory
@@ -17,12 +19,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.EnableAspectJAutoProxy
+import org.springframework.core.io.ResourceLoader
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import javax.sql.DataSource
 
 @SpringBootTest(classes = [
 	TracingAutoConfiguration::class,
 	AspectJAwareAdvisorAutoProxyCreator::class,
-	AnnotationAwareAspectJAutoProxyCreator::class
+	AnnotationAwareAspectJAutoProxyCreator::class,
+	DatabaseConfiguration::class
 ])
 @ExtendWith(SpringExtension::class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
@@ -41,6 +46,12 @@ open class TracingApplicationTests {
 	lateinit var otelSpanProcessor: BatchSpanProcessor
 	@Autowired
 	lateinit var sdkTracerProvider: SdkTracerProvider
+	@Autowired
+	lateinit var datasource: DataSource
+	@Autowired
+	lateinit var resourceLoader: ResourceLoader
+
+	var liquibase: Liquibase? = null
 
 
 	@Test
@@ -69,6 +80,21 @@ open class TracingApplicationTests {
 
 	private fun doCall() {
 		tracingConfigurationProperties.doTestValue()
+	}
+
+	@Test
+	fun get() {
+//		val context: RelationalMappingContext = RelationalMappingContext()
+//		context.getPersistentEntity(Event::class.java)
+//		val liquibaseWriter: LiquibaseChangeSetWriter = LiquibaseChangeSetWriter(context);
+//		with(datasource.connection) {
+//			val postgresDatabase = PostgresDatabase()
+//			postgresDatabase.connection = JdbcConnection(this)
+//			liquibaseWriter.writeChangeSet(
+//				FileSystemResource(File("src/main/resources/db/changelog/db.changelog-master.yml")),
+//				postgresDatabase
+//			);
+//		}
 	}
 
 	@WithSpan(value = "call-this")

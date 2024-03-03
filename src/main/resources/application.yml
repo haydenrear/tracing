@@ -7,7 +7,7 @@ otel.exporter.otlp.endpoint: http://localhost:4318/v1/traces
 #      enabled: false
 trace:
   service-id: tracer
-  service-instance-id: tracer
+  service-instance-id: tracer-instance
 spring:
   aop:
     proxy-target-class: true
@@ -20,6 +20,18 @@ spring:
       lifecycle-management: start_only
       readiness:
         wait: never
+  datasource:
+    username: postgres
+    password: postgres
+    hikari:
+      jdbc-url: postgresql://postgres:postgres@localhost:5432/postgres
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    enabled: true
+    url: postgresql://postgres:postgres@localhost:5432/postgres
+    user: postgres
+    password: postgres
+
 
 
 
