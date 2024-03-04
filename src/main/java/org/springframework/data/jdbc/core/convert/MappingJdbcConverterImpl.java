@@ -145,6 +145,7 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverter impleme
     public SQLType getTargetSqlType(RelationalPersistentProperty property) {
         // TODO: MR with a property that says ignore for particular columns or something
         return property.getColumnName().getReference().toLowerCase().contains("data")
+                || property.getColumnName().getReference().toLowerCase().contains("trace")
                 ? JDBCType.OTHER
                 : JdbcUtil.targetSqlTypeFor(getColumnType(property));
     }

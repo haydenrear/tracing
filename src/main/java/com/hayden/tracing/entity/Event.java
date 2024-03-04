@@ -13,8 +13,9 @@ import org.springframework.data.relational.core.mapping.Table;
 @Data
 public class Event {
 
-    public Event(String data) {
+    public Event(String data, String trace) {
         this.data = data;
+        this.trace = trace;
     }
 
     @Id
@@ -22,5 +23,7 @@ public class Event {
 
     @Column("data")
     String data;
+    @Column("trace")
+    String trace;
 
 }

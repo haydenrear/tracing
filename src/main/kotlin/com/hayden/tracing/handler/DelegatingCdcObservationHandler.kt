@@ -20,9 +20,12 @@ class DelegatingCdcObservationHandler(tracer: OtelTracer,
 
     override fun onStart(context: Observation.Context) {
         // can do anything here
-        eventRepository.save(Event(context.getHighCardinalityKeyValue("trace").value))
-        context.removeHighCardinalityKeyValue("trace")
-        context.remove("trace")
+        eventRepository.save(Event(
+            context.getHighCardinalityKeyValue("data").value,
+            context.getHighCardinalityKeyValue("trace").value
+        ))
+        context.removeHighCardinalityKeyValue("data")
+        context.remove("data")
         super.onStart(context)
     }
 
