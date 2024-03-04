@@ -169,8 +169,7 @@ public class SqlParametersFactoryImpl extends SqlParametersFactory {
 
     private void addConvertedPropertyValue(SqlIdentifierParameterSource parameterSource, SqlIdentifier name, Object value,
     Class<?> javaType) {
-
-        addConvertedValue(parameterSource, value, name, javaType, javaType.equals(byte[].class)? JDBCType.OTHER: JdbcUtil.targetSqlTypeFor(javaType));
+        addConvertedValue(parameterSource, value, name, javaType, JdbcUtil.targetSqlTypeFor(javaType));
     }
 
     private void addConvertedValue(SqlIdentifierParameterSource parameterSource, @Nullable Object value,

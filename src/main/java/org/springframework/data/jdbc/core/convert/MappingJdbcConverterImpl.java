@@ -32,6 +32,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.convert.ConverterNotFoundException;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.data.convert.CustomConversions;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.data.jdbc.core.mapping.JdbcValue;
@@ -88,9 +89,7 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverter impleme
      * @param relationResolver used to fetch additional relations from the database. Must not be {@literal null}.
      */
     public MappingJdbcConverterImpl(RelationalMappingContext context) {
-
         super(context, new JdbcCustomConversions());
-
 
         this.typeFactory = JdbcTypeFactory.unsupported();
     }
@@ -106,6 +105,9 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverter impleme
                                 CustomConversions conversions, JdbcTypeFactory typeFactory) {
 
         super(context, conversions);
+        DefaultConversionService conversionService = new DefaultConversionService();
+//        conversionService.addConverter((Converter<Json, String>) source -> source.data());
+        conversions.registerConvertersIn(conversionService);
 
         Assert.notNull(typeFactory, "JdbcTypeFactory must not be null");
         Assert.notNull(relationResolver, "RelationResolver must not be null");
@@ -142,7 +144,7 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverter impleme
     @Override
     public SQLType getTargetSqlType(RelationalPersistentProperty property) {
         // TODO: MR with a property that says ignore for particular columns or something
-        return property.getColumnName().getReference().contains("data")
+        return property.getColumnName().getReference().toLowerCase().contains("data")
                 ? JDBCType.OTHER
                 : JdbcUtil.targetSqlTypeFor(getColumnType(property));
     }

@@ -1,5 +1,6 @@
 package com.hayden.tracing.handler
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.hayden.tracing.entity.Event
 import com.hayden.tracing.repository.EventRepository
 import io.micrometer.common.KeyValue
@@ -16,9 +17,10 @@ import org.springframework.stereotype.Component
 class DelegatingCdcObservationHandler(tracer: OtelTracer,
                                       val eventRepository: EventRepository) : DefaultTracingObservationHandler(tracer) {
 
+
     override fun onStart(context: Observation.Context) {
         // can do anything here
-        eventRepository.save(Event(null, "{\"hello\": [1, 2, 3]}"))
+        eventRepository.save(Event(context.getHighCardinalityKeyValue("trace").value))
         context.removeHighCardinalityKeyValue("trace")
         context.remove("trace")
         super.onStart(context)

@@ -11,8 +11,10 @@ import io.opentelemetry.exporter.otlp.http.logs.OtlpHttpLogRecordExporter
 import io.opentelemetry.exporter.otlp.http.metrics.OtlpHttpMetricExporter
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
 import io.opentelemetry.sdk.resources.Resource
+import jakarta.annotation.PostConstruct
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.actuate.autoconfigure.tracing.SpanExporters
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
@@ -23,6 +25,11 @@ import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.*
+import org.springframework.core.convert.ConversionService
+import org.springframework.core.convert.converter.Converter
+import org.springframework.core.convert.converter.ConverterRegistry
+import org.springframework.core.convert.support.ConfigurableConversionService
+import org.springframework.core.convert.support.GenericConversionService
 import org.springframework.data.jdbc.core.convert.*
 import org.springframework.data.jdbc.core.mapping.JdbcMappingContext
 import org.springframework.data.relational.core.dialect.Dialect

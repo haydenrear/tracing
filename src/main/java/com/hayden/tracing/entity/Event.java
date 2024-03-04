@@ -13,8 +13,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Data
 public class Event {
 
-    public Event(Long id, String data) {
-        this.id = id;
+    public Event(String data) {
         this.data = data;
     }
 
