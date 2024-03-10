@@ -56,7 +56,8 @@ open class TracingApplicationTests {
 
 	@Test
 	fun contextLoads() {
-		val ex: JavaReflectionArgumentExtractor = JavaReflectionArgumentExtractor();
+		val ex: JavaReflectionBehaviorDataExtractor =
+			JavaReflectionBehaviorDataExtractor();
 //		var extracted = ex.extractRecursive(
 //			Trace(
 //				Instant.now(),

@@ -7,14 +7,12 @@ import com.hayden.tracing_apt.Logged;
 import com.hayden.tracing_apt.LoggingPattern;
 import org.aspectj.lang.annotation.Before;
 
-@Cdc(
-        @LoggingPattern(
+@Cdc({@LoggingPattern(
                 before = @Before("hello..."),
                 aspectName = "TestAspect",
                 aspectFunctionName = "thisAspect",
                 logId = "logging_id",
                 monitoringTypes = MonitoringTypes.IO
-        )
-)
+)})
 public class TestAspect {
 }

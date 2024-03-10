@@ -15,8 +15,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class DelegatingCdcObservationHandler(tracer: OtelTracer,
-                                      val eventRepository: EventRepository) : DefaultTracingObservationHandler(tracer) {
-
+                                      val eventRepository: EventRepository): DefaultTracingObservationHandler(tracer) {
 
     override fun onStart(context: Observation.Context) {
         // can do anything here
@@ -29,7 +28,4 @@ class DelegatingCdcObservationHandler(tracer: OtelTracer,
         super.onStart(context)
     }
 
-    override fun onStop(context: Observation.Context) {
-        super.onStop(context)
-    }
 }

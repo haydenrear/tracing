@@ -1,23 +1,22 @@
 package com.hayden.tracing;
 
-import com.hayden.tracing.observation_aspects.ArgumentExtractor;
+import com.hayden.tracing.observation_aspects.BehaviorDataExtractor;
 import com.hayden.tracing.observation_aspects.ObservationUtility;
 import com.hayden.utilitymodule.MapFunctions;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.reflect.CodeSignature;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class JavaReflectionArgumentExtractor implements ArgumentExtractor {
+
+@Component
+public class JavaReflectionBehaviorDataExtractor implements BehaviorDataExtractor {
 
     // TODO: Load class matchers to extract args and signatures. For example DataSource connection.
-
     record JavaReflectionArgumentExtractorArgs(@NotNull ObservationUtility.ObservationArgs proceeding,
                                                @NotNull ObservationUtility<? extends ObservationUtility.ObservationArgs> utility,
                                                Object object,
@@ -29,15 +28,14 @@ public class JavaReflectionArgumentExtractor implements ArgumentExtractor {
     public Map<String, Object> extract(@NotNull ObservationUtility.ObservationArgs proceeding,
                                        @NotNull ObservationUtility<?> utility) {
         if (utility.matchers(proceeding).stream().anyMatch(u -> u.matches(proceeding))) {
-            AtomicInteger i = new AtomicInteger();
             return MapFunctions.CollectMap(
-                    Arrays.stream(proceeding.getJoinPoint().getArgs())
+                    proceeding.args().entrySet().stream()
                             .flatMap(arg -> this.extractRecursive(
                                                     new JavaReflectionArgumentExtractorArgs(
-                                                            proceeding, utility, arg,
+                                                            proceeding, utility, arg.getValue(),
                                                             0, 3
                                                     ),
-                                                    i.getAndIncrement()
+                                                    arg.getKey()
                                             )
                                             .entrySet()
                                             .stream()
@@ -48,16 +46,8 @@ public class JavaReflectionArgumentExtractor implements ArgumentExtractor {
         return new HashMap<>();
     }
 
-    private Map<String, Object> extractRecursive(JavaReflectionArgumentExtractorArgs argumentExtractorArgs, int numArg) {
-        return extractRecursive(
-                argumentExtractorArgs,
-                getParameterName(argumentExtractorArgs.proceeding().getJoinPoint(), numArg)
-                        .orElse(argumentExtractorArgs.object.getClass().getSimpleName())
-        );
-    }
-
     private Map<String, Object> extractRecursive(JavaReflectionArgumentExtractorArgs argumentExtractorArgs,
-                                                String name) {
+                                                 String name) {
         var util = argumentExtractorArgs.utility;
         return Optional.ofNullable(argumentExtractorArgs.object)
                 .stream()
@@ -70,13 +60,6 @@ public class JavaReflectionArgumentExtractor implements ArgumentExtractor {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k1, k2) -> k1));
     }
 
-    private static Optional<String> getParameterName(JoinPoint joinPoint, int numArg) {
-        if (joinPoint.getSignature() instanceof CodeSignature codeSignature && Optional.ofNullable(codeSignature.getParameterNames()).filter(s -> s.length < numArg).isPresent()) {
-            return Optional.ofNullable(codeSignature.getParameterNames()[numArg]);
-        }
-
-        return Optional.empty();
-    }
 
     @NotNull
     private Map<String, Object> getNextArgsRecursive(JavaReflectionArgumentExtractorArgs argumentExtractorArgs) {
@@ -100,7 +83,7 @@ public class JavaReflectionArgumentExtractor implements ArgumentExtractor {
                     .filter(o -> argumentExtractorArgs.utility.matchers(argumentExtractorArgs.proceeding).stream().anyMatch(b -> b.matches(o)))
                     .stream()
                     .flatMap(nextExtractedArg -> extractRecursive(
-                            // TODO - update with the JEP to be {  }
+                            // TODO - update with the JEP to be using the with {  }
                             new JavaReflectionArgumentExtractorArgs(
                                     argumentExtractorArgs.proceeding,
                                     argumentExtractorArgs.utility,
