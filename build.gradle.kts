@@ -4,12 +4,13 @@ plugins {
 	id("com.hayden.no-main-class")
 	id("com.hayden.kotlin")
 	id("com.hayden.observable-app")
+	id("com.hayden.docker-compose")
+	id("com.hayden.persistence")
 }
 
 tasks.register("prepareKotlinBuildScriptModel")
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-docker-compose")
 	implementation("io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.1.0-alpha")
 	implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.1.0")
 	implementation("io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter:1.22.1-alpha")
@@ -26,14 +27,10 @@ dependencies {
 	runtimeOnly("io.micrometer:micrometer-registry-otlp")
 
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
-	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
-	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-aop")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	implementation("org.liquibase:liquibase-core")
 
 	compileOnly("org.projectlombok:lombok")
-	runtimeOnly("org.postgresql:postgresql")
 
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 
