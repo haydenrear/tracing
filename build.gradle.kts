@@ -6,37 +6,18 @@ plugins {
 	id("com.hayden.observable-app")
 	id("com.hayden.docker-compose")
 	id("com.hayden.persistence")
+	id("com.hayden.aop")
+	id("com.hayden.templating")
+	id("com.hayden.spring-app")
+	id("com.hayden.web-app")
+	id("net.bytebuddy.byte-buddy-gradle-plugin") version "1.14.17"
 }
 
 tasks.register("prepareKotlinBuildScriptModel")
 
 dependencies {
-	implementation("io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.1.0-alpha")
-	implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-api:2.1.0")
-	implementation("io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter:1.22.1-alpha")
-	implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.1.0")
-	implementation("io.opentelemetry.javaagent:opentelemetry-javaagent:2.0.0")
-	implementation("io.opentelemetry.instrumentation:opentelemetry-jdbc:2.1.0-alpha")
-	implementation("io.micrometer:context-propagation:1.1.1")
+	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1")
-
-	implementation("io.micrometer:micrometer-tracing-bridge-otel")
-
-	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
-	runtimeOnly("io.micrometer:micrometer-core")
-	runtimeOnly("io.micrometer:micrometer-registry-otlp")
-
-	implementation("org.springframework.boot:spring-boot-starter-actuator")
-	implementation("org.springframework.boot:spring-boot-starter-aop")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
-
-	compileOnly("org.projectlombok:lombok")
-
-	developmentOnly("org.springframework.boot:spring-boot-devtools")
-
-	annotationProcessor("org.projectlombok:lombok")
-
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
 
 	implementation(project(":utilitymodule"))
 	implementation(project(":tracing_agent"))

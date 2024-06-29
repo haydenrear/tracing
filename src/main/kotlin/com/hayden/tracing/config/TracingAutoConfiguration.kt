@@ -4,6 +4,7 @@ import com.hayden.tracing.handler.DelegatingCdcObservationHandler
 import com.hayden.tracing.observation_aspects.AnnotationRegistrarObservabilityUtility
 import com.hayden.tracing.props.TracingConfigurationProperties
 import com.hayden.tracing.repository.EventRepository
+import com.hayden.tracing_agent.config.TracingProperties
 import io.micrometer.observation.ObservationRegistry
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.exporter.logging.LoggingSpanExporter
@@ -11,49 +12,32 @@ import io.opentelemetry.exporter.otlp.http.logs.OtlpHttpLogRecordExporter
 import io.opentelemetry.exporter.otlp.http.metrics.OtlpHttpMetricExporter
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
 import io.opentelemetry.sdk.resources.Resource
-import jakarta.annotation.PostConstruct
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.actuate.autoconfigure.tracing.SpanExporters
-import org.springframework.boot.autoconfigure.AutoConfiguration
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration
-import org.springframework.boot.autoconfigure.data.jdbc.JdbcRepositoriesAutoConfiguration
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
-import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.*
-import org.springframework.core.convert.ConversionService
-import org.springframework.core.convert.converter.Converter
-import org.springframework.core.convert.converter.ConverterRegistry
-import org.springframework.core.convert.support.ConfigurableConversionService
-import org.springframework.core.convert.support.GenericConversionService
 import org.springframework.data.jdbc.core.convert.*
 import org.springframework.data.jdbc.core.mapping.JdbcMappingContext
 import org.springframework.data.relational.core.dialect.Dialect
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
 
 
-@AutoConfiguration
-@ImportAutoConfiguration(value=[
+@Configuration
+@Import(value=[
     org.springframework.boot.actuate.autoconfigure.tracing.OpenTelemetryAutoConfiguration::class,
     io.opentelemetry.instrumentation.spring.autoconfigure.OpenTelemetryAutoConfiguration::class,
-    LiquibaseAutoConfiguration::class,
-    DataSourceTransactionManagerAutoConfiguration::class,
-    DataSourceAutoConfiguration::class,
-    JdbcTemplateAutoConfiguration::class,
-    JdbcRepositoriesAutoConfiguration::class
+    DatabaseConfiguration::class,
+    LiquibaseAutoConfiguration::class
 ])
 @ComponentScan(basePackageClasses = [
     AnnotationRegistrarObservabilityUtility::class,
     TracingInterceptor::class,
     DelegatingCdcObservationHandler::class,
     EventRepository::class
-])
-@EnableConfigurationProperties(TracingConfigurationProperties::class)
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+], basePackages = ["com.hayden.tracing"])
+@PropertySource(value = ["classpath:application.yml"], factory = YamlPropertySourceFactory::class)
 open class TracingAutoConfiguration {
 
     companion object {
@@ -97,6 +81,7 @@ open class TracingAutoConfiguration {
             .build()
     }
 
+
     @Bean
     open fun loggingSpanExporter(): LoggingSpanExporter {
         return LoggingSpanExporter.create()
@@ -111,7 +96,7 @@ open class TracingAutoConfiguration {
     }
 
     @Bean
-    open fun resource(attributes: List<Attributes>): Resource {
+    open fun otelResource(attributes: List<Attributes>): Resource {
         val attributesBuilder = Attributes.builder()
         attributes.stream()
             .peek { log.info("Creating resource by adding attributes {}", it.asMap()) }
