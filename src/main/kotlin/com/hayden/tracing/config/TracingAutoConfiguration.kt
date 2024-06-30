@@ -4,7 +4,6 @@ import com.hayden.tracing.handler.DelegatingCdcObservationHandler
 import com.hayden.tracing.observation_aspects.AnnotationRegistrarObservabilityUtility
 import com.hayden.tracing.props.TracingConfigurationProperties
 import com.hayden.tracing.repository.EventRepository
-import com.hayden.tracing_agent.config.TracingProperties
 import io.micrometer.observation.ObservationRegistry
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.exporter.logging.LoggingSpanExporter
@@ -16,7 +15,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.autoconfigure.tracing.SpanExporters
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
-import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.*
 import org.springframework.data.jdbc.core.convert.*
 import org.springframework.data.jdbc.core.mapping.JdbcMappingContext

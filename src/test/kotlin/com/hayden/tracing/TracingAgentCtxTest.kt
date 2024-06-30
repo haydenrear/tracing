@@ -11,12 +11,12 @@ open class TracingAgentCtxTest {
 
     @Test
     open fun doTextContext() {
-        ContextHolder.getTracingService()
+        ContextHolder.initTracingService()
         TracingAgent.instrumentClass(TracingAgentCtxTest::class.java.name)
         for (i in 0..10) {
             doTest()
         }
-        TracingAgent.revertInstrumentation(TracingAgentCtxTest::class.java.name);
+        TracingAgent.registerRevertInstrumentation(TracingAgentCtxTest::class.java.name);
         for (i in 0..10) {
             doTest()
         }
