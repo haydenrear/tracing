@@ -53,42 +53,14 @@ open class TracingApplicationTests {
 
 	@Test
 	fun contextLoads() {
-		val ex: JavaReflectionBehaviorDataExtractor =
-			JavaReflectionBehaviorDataExtractor();
-//		var extracted = ex.extractRecursive(
-//			Trace(
-//				Instant.now(),
-//				MessageMetadata(TraceMetadata(ServiceIds("one", "two")), LogType.MESSAGE),
-//				Message(mutableMapOf(Pair("one", "two")) as Map<String, *>, "one-two"),
-//
-//			), 3, 0, AnnotationRegistrarObservabilityUtility());
-//		println(extracted.toString())
-
 		log?.info("hello!")
 		for (i in 1..10) {
-//			callThis()
 			otelSpanProcessor.forceFlush()
 			sdkTracerProvider.forceFlush()
 		}
 		otelSpanProcessor.forceFlush()
 		sdkTracerProvider.forceFlush()
 		Thread.sleep(5000)
-	}
-
-
-	@Test
-	fun get() {
-//		val context: RelationalMappingContext = RelationalMappingContext()
-//		context.getPersistentEntity(Event::class.java)
-//		val liquibaseWriter: LiquibaseChangeSetWriter = LiquibaseChangeSetWriter(context);
-//		with(datasource.connection) {
-//			val postgresDatabase = PostgresDatabase()
-//			postgresDatabase.connection = JdbcConnection(this)
-//			liquibaseWriter.writeChangeSet(
-//				FileSystemResource(File("src/main/resources/db/changelog/db.changelog-master.yml")),
-//				postgresDatabase
-//			);
-//		}
 	}
 
 	@WithSpan(value = "call-this")
