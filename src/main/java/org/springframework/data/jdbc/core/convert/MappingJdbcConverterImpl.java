@@ -27,6 +27,7 @@ import java.util.function.Function;
 import lombok.Setter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Lazy;
@@ -106,7 +107,6 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverter impleme
 
         super(context, conversions);
         DefaultConversionService conversionService = new DefaultConversionService();
-//        conversionService.addConverter((Converter<Json, String>) source -> source.data());
         conversions.registerConvertersIn(conversionService);
 
         Assert.notNull(typeFactory, "JdbcTypeFactory must not be null");
@@ -143,9 +143,7 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverter impleme
 
     @Override
     public SQLType getTargetSqlType(RelationalPersistentProperty property) {
-        // TODO: MR with a property that says ignore for particular columns or something
-        return property.getColumnName().getReference().toLowerCase().contains("data")
-                || property.getColumnName().getReference().toLowerCase().contains("trace")
+        return property.isAnnotationPresent(Json.class)
                 ? JDBCType.OTHER
                 : JdbcUtil.targetSqlTypeFor(getColumnType(property));
     }
@@ -457,6 +455,9 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverter impleme
 
         @Override
         public <S> S convert(Object source, TypeInformation<? extends S> typeHint) {
+            if (source instanceof PGobject pGobject && typeHint.getType().equals(String.class)) {
+                return (S) pGobject.getValue();
+            }
             return delegate.convert(source, typeHint);
         }
 

@@ -3,7 +3,7 @@ package com.hayden.tracing
 import com.hayden.tracing.config.DatabaseConfiguration
 import com.hayden.tracing.config.ITracingInterceptor
 import com.hayden.tracing.config.TracingAutoConfiguration
-import com.hayden.tracing.props.TracingConfigurationProperties
+import com.hayden.tracing_apt.props.TracingConfigurationProperties
 import io.opentelemetry.api.trace.SpanBuilder
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
 import io.opentelemetry.instrumentation.annotations.WithSpan

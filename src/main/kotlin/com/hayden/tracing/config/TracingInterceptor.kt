@@ -1,7 +1,7 @@
 package com.hayden.tracing.config
 
 import org.springframework.stereotype.Component
-import com.hayden.tracing.Logged;
+import com.hayden.tracing_apt.Logged;
 
 interface ITracingInterceptor {
     fun doTestValue()

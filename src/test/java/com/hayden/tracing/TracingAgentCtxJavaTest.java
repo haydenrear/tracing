@@ -20,7 +20,6 @@ public class TracingAgentCtxJavaTest {
         doTextContext(testClass);
     }
 
-
     public void doTextContext(TestClass testClass) {
         for (int i = 0; i < 10; i++) {
             testClass.test();

@@ -1,8 +1,8 @@
 package com.hayden.tracing.config
 
 import com.hayden.tracing.handler.DelegatingCdcObservationHandler
-import com.hayden.tracing.observation_aspects.AnnotationRegistrarObservabilityUtility
-import com.hayden.tracing.props.TracingConfigurationProperties
+import com.hayden.tracing_apt.observation_aspects.AnnotationRegistrarObservabilityUtility
+import com.hayden.tracing_apt.props.TracingConfigurationProperties
 import com.hayden.tracing.repository.EventRepository
 import io.micrometer.observation.ObservationRegistry
 import io.opentelemetry.api.common.Attributes
@@ -29,12 +29,14 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
     DatabaseConfiguration::class,
     LiquibaseAutoConfiguration::class
 ])
-@ComponentScan(basePackageClasses = [
-    AnnotationRegistrarObservabilityUtility::class,
-    TracingInterceptor::class,
-    DelegatingCdcObservationHandler::class,
-    EventRepository::class
-], basePackages = ["com.hayden.tracing"])
+@ComponentScan(
+    basePackageClasses = [
+        AnnotationRegistrarObservabilityUtility::class,
+        TracingInterceptor::class,
+        DelegatingCdcObservationHandler::class
+    ],
+    basePackages = ["com.hayden.tracing"]
+)
 @PropertySource(value = ["classpath:application.yml"], factory = YamlPropertySourceFactory::class)
 open class TracingAutoConfiguration {
 
