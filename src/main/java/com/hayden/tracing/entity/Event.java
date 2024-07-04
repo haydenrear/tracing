@@ -3,9 +3,8 @@ package com.hayden.tracing.entity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.jdbc.core.convert.Json;
+import org.springframework.data.jdbc.core.convert.JdbcPostgresJson;
 import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Embedded;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Table("event")
@@ -22,10 +21,10 @@ public class Event {
     Long id;
 
     @Column("data")
-    @Json
+    @JdbcPostgresJson
     String data;
     @Column("trace")
-    @Json
+    @JdbcPostgresJson
     String trace;
 
 }

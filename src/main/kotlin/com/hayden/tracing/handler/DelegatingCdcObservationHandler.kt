@@ -23,6 +23,7 @@ open class DelegatingCdcObservationHandler(otelTracer: OtelTracer) : DefaultTrac
     lateinit var eventRepository: EventRepository
 
     override fun onStart(context: Observation.Context) {
+        eventRepository.findAll()
         context.getHighCardinalityKeyValue("data")
             .mapNullable { d ->
                 context.getHighCardinalityKeyValue("trace")

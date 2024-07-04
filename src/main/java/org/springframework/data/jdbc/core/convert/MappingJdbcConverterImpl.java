@@ -15,10 +15,12 @@
  */
 package org.springframework.data.jdbc.core.convert;
 
+import java.lang.reflect.Field;
 import java.sql.Array;
 import java.sql.JDBCType;
 import java.sql.SQLException;
 import java.sql.SQLType;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
@@ -27,6 +29,7 @@ import java.util.function.Function;
 import lombok.Setter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.NotNull;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContextAware;
@@ -35,16 +38,15 @@ import org.springframework.core.convert.ConverterNotFoundException;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.data.convert.CustomConversions;
+import org.springframework.data.convert.PropertyValueConverterRegistrar;
+import org.springframework.data.convert.SimplePropertyValueConversions;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.data.jdbc.core.mapping.JdbcValue;
 import org.springframework.data.jdbc.support.JdbcUtil;
 import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.mapping.model.SimpleTypeHolder;
 import org.springframework.data.mapping.model.SpELExpressionEvaluator;
-import org.springframework.data.relational.core.conversion.MappingRelationalConverter;
-import org.springframework.data.relational.core.conversion.ObjectPath;
-import org.springframework.data.relational.core.conversion.RelationalConverter;
-import org.springframework.data.relational.core.conversion.RowDocumentAccessor;
+import org.springframework.data.relational.core.conversion.*;
 import org.springframework.data.relational.core.mapping.AggregatePath;
 import org.springframework.data.relational.core.mapping.RelationalMappingContext;
 import org.springframework.data.relational.core.mapping.RelationalPersistentEntity;
@@ -70,7 +72,7 @@ import org.springframework.util.Assert;
  * @see CustomConversions
  * @since 3.2
  */
-public class MappingJdbcConverterImpl extends MappingRelationalConverter implements JdbcConverter, ApplicationContextAware {
+public class MappingJdbcConverterImpl extends MappingRelationalConverterImpl implements JdbcConverter, ApplicationContextAware {
 
     private static final Log LOG = LogFactory.getLog(MappingJdbcConverterImpl.class);
     private static final Converter<Iterable<?>, Map<?, ?>> ITERABLE_OF_ENTRY_TO_MAP_CONVERTER = new IterableOfEntryToMapConverter();
@@ -89,8 +91,8 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverter impleme
      * @param context must not be {@literal null}.
      * @param relationResolver used to fetch additional relations from the database. Must not be {@literal null}.
      */
-    public MappingJdbcConverterImpl(RelationalMappingContext context) {
-        super(context, new JdbcCustomConversions());
+    public MappingJdbcConverterImpl(RelationalMappingContext context, JdbcAnnotationConverter annotationConverter) {
+        super(context, new JdbcCustomConversions(), annotationConverter);
 
         this.typeFactory = JdbcTypeFactory.unsupported();
     }
@@ -103,9 +105,9 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverter impleme
      * @param typeFactory must not be {@literal null}
      */
     public MappingJdbcConverterImpl(RelationalMappingContext context, RelationResolver relationResolver,
-                                CustomConversions conversions, JdbcTypeFactory typeFactory) {
+                                CustomConversions conversions, JdbcTypeFactory typeFactory, JdbcAnnotationConverter jdbcAnnotationConverter) {
 
-        super(context, conversions);
+        super(context, conversions, jdbcAnnotationConverter);
         DefaultConversionService conversionService = new DefaultConversionService();
         conversions.registerConvertersIn(conversionService);
 
@@ -143,8 +145,9 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverter impleme
 
     @Override
     public SQLType getTargetSqlType(RelationalPersistentProperty property) {
-        return property.isAnnotationPresent(Json.class)
-                ? JDBCType.OTHER
+        // TODO: service for targets...
+        return property.isAnnotationPresent(JdbcPostgresJson.class)
+                ? property.findAnnotation(JdbcPostgresJson.class).jdbcType()
                 : JdbcUtil.targetSqlTypeFor(getColumnType(property));
     }
 
@@ -443,6 +446,8 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverter impleme
         }
     }
 
+    String ok;
+
     /**
      * Marker object to indicate that the property value provider should resolve relations.
      *
@@ -455,9 +460,6 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverter impleme
 
         @Override
         public <S> S convert(Object source, TypeInformation<? extends S> typeHint) {
-            if (source instanceof PGobject pGobject && typeHint.getType().equals(String.class)) {
-                return (S) pGobject.getValue();
-            }
             return delegate.convert(source, typeHint);
         }
 

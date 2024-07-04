@@ -14,10 +14,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.context.annotation.Bean
+import org.springframework.data.jdbc.core.convert.JdbcAnnotationConverter
 import org.springframework.data.jdbc.core.convert.JdbcConverter
 import org.springframework.data.jdbc.core.convert.MappingJdbcConverterImpl
 import org.springframework.data.jdbc.core.mapping.JdbcMappingContext
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories
+import org.springframework.data.relational.core.conversion.MappingRelationalConverterImpl
 import org.springframework.data.relational.core.mapping.RelationalMappingContext
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
@@ -64,8 +66,9 @@ open class DatabaseConfiguration {
     }
 
     @Bean
-    open fun jdbcConverter(relationalMappingContext: RelationalMappingContext): JdbcConverter {
-        return MappingJdbcConverterImpl(relationalMappingContext)
+    open fun jdbcConverter(relationalMappingContext: RelationalMappingContext,
+                           jdbcAnnotationConverter: JdbcAnnotationConverter): JdbcConverter {
+        return MappingJdbcConverterImpl(relationalMappingContext, jdbcAnnotationConverter)
     }
 
     @Bean
