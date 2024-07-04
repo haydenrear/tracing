@@ -1,7 +1,6 @@
 package com.hayden.tracing
 
 import com.hayden.tracing.config.DatabaseConfiguration
-import com.hayden.tracing.config.ITracingInterceptor
 import com.hayden.tracing.config.TracingAutoConfiguration
 import com.hayden.tracing_apt.props.TracingConfigurationProperties
 import io.opentelemetry.api.trace.SpanBuilder
@@ -38,8 +37,6 @@ open class TracingApplicationTests {
 	}
 
 	@Autowired
-	lateinit var tracingConfigurationProperties: ITracingInterceptor
-	@Autowired
 	lateinit var span: OtlpHttpSpanExporter;
 
 	@Autowired
@@ -70,7 +67,6 @@ open class TracingApplicationTests {
 		log?.info("hello!")
 		for (i in 1..10) {
 //			callThis()
-			doCall()
 			otelSpanProcessor.forceFlush()
 			sdkTracerProvider.forceFlush()
 		}
@@ -79,9 +75,6 @@ open class TracingApplicationTests {
 		Thread.sleep(5000)
 	}
 
-	private fun doCall() {
-		tracingConfigurationProperties.doTestValue()
-	}
 
 	@Test
 	fun get() {
