@@ -1,16 +1,12 @@
 package org.springframework.data.jdbc.core.convert;
 
-import com.hayden.utilitymodule.MapFunctions;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.util.TypeInformation;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -26,11 +22,6 @@ public class JdbcAnnotationConverter {
                     .map(a -> a.convert(source));
 
         return Optional.empty();
-    }
-
-    public <S> boolean matches(TypeInformation<? extends S> typeHint) {
-        return typeHint.toTypeDescriptor().getResolvableType().getSource() instanceof Field f
-                && retrieveConverter(f) != null;
     }
 
     public <S, U> @Nullable AnnotationDrivenJdbcConverter<S, U> retrieveConverter(Field name) {
