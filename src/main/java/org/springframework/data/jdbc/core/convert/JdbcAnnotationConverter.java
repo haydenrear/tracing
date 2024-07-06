@@ -1,7 +1,9 @@
 package org.springframework.data.jdbc.core.convert;
 
 import jakarta.annotation.Nullable;
+import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.util.TypeInformation;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +12,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Service
-public class JdbcAnnotationConverter {
+public class JdbcAnnotationConverter  {
 
     @Autowired
     private Collection<AnnotationDrivenJdbcConverter<?,?>> converters;
@@ -32,5 +34,6 @@ public class JdbcAnnotationConverter {
             return null;
         }
     }
+
 
 }

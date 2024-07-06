@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.hayden.tracing.entity.Event
 import com.hayden.tracing.repository.EventRepository
+import org.postgresql.util.PGobject
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.autoconfigure.data.jdbc.JdbcRepositoriesAutoConfiguration
@@ -14,6 +15,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.context.annotation.Bean
+import org.springframework.core.convert.ConversionService
+import org.springframework.core.convert.converter.Converter
+import org.springframework.core.convert.converter.ConverterRegistry
+import org.springframework.core.convert.support.DefaultConversionService
 import org.springframework.data.jdbc.core.convert.JdbcAnnotationConverter
 import org.springframework.data.jdbc.core.convert.JdbcConverter
 import org.springframework.data.jdbc.core.convert.MappingJdbcConverterImpl
@@ -53,6 +58,7 @@ open class DatabaseConfiguration {
     open fun jdbcTemplate(dataSource: DataSource): JdbcTemplate {
         return JdbcTemplate(dataSource);
     }
+
 
     @Bean
     open fun namedParameterJdbcOperations(jdbcTemplate: JdbcTemplate): NamedParameterJdbcOperations {

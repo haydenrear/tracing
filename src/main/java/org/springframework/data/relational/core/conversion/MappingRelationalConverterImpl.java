@@ -1,10 +1,15 @@
 package org.springframework.data.relational.core.conversion;
 
+import org.postgresql.util.PGobject;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.data.convert.CustomConversions;
 import org.springframework.data.jdbc.core.convert.AnnotationDrivenJdbcConverter;
 import org.springframework.data.jdbc.core.convert.JdbcAnnotationConverter;
+import org.springframework.data.jdbc.core.convert.JdbcCustomConversions;
 import org.springframework.data.relational.core.mapping.RelationalMappingContext;
 import org.springframework.data.util.TypeInformation;
 import org.springframework.stereotype.Component;

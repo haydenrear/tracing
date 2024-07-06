@@ -81,6 +81,8 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverterImpl imp
 
     @Setter @Autowired @Lazy
     private RelationResolver relationResolver;
+    @Autowired
+    private JdbcTargetSqlTypesProvider targetSqlTypesProvider;
 
     /**
      * Creates a new {@link MappingJdbcConverter} given {@link MappingContext} and a {@link JdbcTypeFactory#unsupported()
@@ -145,10 +147,7 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverterImpl imp
 
     @Override
     public SQLType getTargetSqlType(RelationalPersistentProperty property) {
-        // TODO: service for targets...
-        return property.isAnnotationPresent(JdbcPostgresJson.class)
-                ? property.findAnnotation(JdbcPostgresJson.class).jdbcType()
-                : JdbcUtil.targetSqlTypeFor(getColumnType(property));
+        return targetSqlTypesProvider.retrieve(property);
     }
 
     @Override
