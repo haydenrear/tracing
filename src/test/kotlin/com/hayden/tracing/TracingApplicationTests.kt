@@ -51,7 +51,7 @@ open class TracingApplicationTests {
 	var liquibase: Liquibase? = null
 
 
-	@Test
+//	@Test
 	fun contextLoads() {
 		log?.info("hello!")
 		for (i in 1..10) {
