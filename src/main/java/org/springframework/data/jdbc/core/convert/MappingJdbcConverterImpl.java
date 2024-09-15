@@ -240,13 +240,17 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverterImpl imp
 
     @Override
     public JdbcValue writeJdbcValue(@Nullable Object value, Class<?> columnType, SQLType sqlType) {
+        return writeJdbcValue(value, TypeInformation.of(columnType), sqlType);
+    }
 
+    @Override
+    public JdbcValue writeJdbcValue(Object value, TypeInformation<?> type, SQLType sqlType) {
         JdbcValue jdbcValue = tryToConvertToJdbcValue(value);
         if (jdbcValue != null) {
             return jdbcValue;
         }
 
-        Object convertedValue = writeValue(value, TypeInformation.of(columnType));
+        Object convertedValue = writeValue(value, type);
 
         if (convertedValue == null || !convertedValue.getClass().isArray()) {
 
@@ -284,7 +288,11 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverterImpl imp
     @SuppressWarnings("unchecked")
     @Override
     public <R> R readAndResolve(Class<R> type, RowDocument source, Identifier identifier) {
+        return readAndResolve(TypeInformation.of(type), source, identifier);
+    }
 
+    @Override
+    public <R> R readAndResolve(TypeInformation<R> type, RowDocument source, Identifier identifier) {
         RelationalPersistentEntity<R> entity = (RelationalPersistentEntity<R>) getMappingContext()
                 .getRequiredPersistentEntity(type);
         AggregatePath path = getMappingContext().getAggregatePath(entity);
@@ -296,7 +304,6 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverterImpl imp
         return readAggregate(context, source, entity.getTypeInformation());
     }
 
-    @Override
     protected RelationalPropertyValueProvider newValueProvider(RowDocumentAccessor documentAccessor,
                                                                SpELExpressionEvaluator evaluator, ConversionContext context) {
 
@@ -434,6 +441,11 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverterImpl imp
             }
 
             return delegate.hasValue(aggregatePath);
+        }
+
+        @Override
+        public boolean hasNonEmptyValue(RelationalPersistentProperty property) {
+            return delegate.hasNonEmptyValue(property);
         }
 
         @Override
