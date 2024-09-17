@@ -75,7 +75,7 @@ import org.springframework.util.Assert;
 public class MappingJdbcConverterImpl extends MappingRelationalConverterImpl implements JdbcConverter, ApplicationContextAware {
 
     private static final Log LOG = LogFactory.getLog(MappingJdbcConverterImpl.class);
-    private static final Converter<Iterable<?>, Map<?, ?>> ITERABLE_OF_ENTRY_TO_MAP_CONVERTER = new IterableOfEntryToMapConverter();
+//    private static final Converter<Iterable<?>, Map<?, ?>> ITERABLE_OF_ENTRY_TO_MAP_CONVERTER = new IterableOfEntryToMapConverter();
 
     private final JdbcTypeFactory typeFactory;
 
@@ -399,9 +399,9 @@ public class MappingJdbcConverterImpl extends MappingRelationalConverterImpl imp
                         return (T) allByPath;
                     }
 
-                    if (property.isMap()) {
-                        return (T) ITERABLE_OF_ENTRY_TO_MAP_CONVERTER.convert(allByPath);
-                    }
+//                    if (property.isMap()) {
+//                        return (T) ITERABLE_OF_ENTRY_TO_MAP_CONVERTER.convert(allByPath);
+//                    }
 
                     Iterator<Object> iterator = allByPath.iterator();
                     if (iterator.hasNext()) {

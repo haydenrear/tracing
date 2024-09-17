@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Primary
 import org.springframework.core.convert.ConversionService
 import org.springframework.core.convert.converter.Converter
 import org.springframework.core.convert.converter.ConverterRegistry
@@ -78,6 +79,7 @@ open class DatabaseConfiguration {
     }
 
     @Bean
+    @Primary
     open fun om(): ObjectMapper {
         var om = ObjectMapper()
         om.registerModules(JavaTimeModule())

@@ -1,4 +1,24 @@
 services:
+  fluentd:
+    image: fluent/fluentd-kubernetes-daemonset:v1-debian-elasticsearch
+    container_name: fluentd-container
+    ports:
+      - "24224:24224"
+    volumes:
+      - ./fluentd-config.conf:/fluentd/etc/fluentd.conf
+    networks:
+      - tracing-integration
+  fluentbit:
+    image: fluent/fluent-bit:1.9.10
+    container_name: fluentbit-container
+    ports:
+      - "24225:24225"
+      - "8888:8888"
+      - "8889:8889"
+    volumes:
+      - ./fluentbit-config.conf:/fluent-bit/etc/fluent-bit.conf
+    networks:
+      - tracing-integration
   postgres:
     image: localhost:5001/postgres-pgvector
     container_name: int-postgres

@@ -1,3 +1,4 @@
+import com.hayden.haydenbomplugin.BuildSrcVersionCatalogCollector
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -13,14 +14,25 @@ plugins {
 	id("net.bytebuddy.byte-buddy-gradle-plugin") version "1.14.17"
 }
 
+
+
 tasks.register("prepareKotlinBuildScriptModel")
 
+val vC = project.extensions.getByType(BuildSrcVersionCatalogCollector::class.java)
+
 dependencies {
+
+	vC.bundles.opentelemetryBundle.inBundle()
+		.map { implementation(it) }
+
+
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1")
 
 	implementation(project(":utilitymodule"))
 	implementation(project(":tracing_agent"))
+
+
 
 	annotationProcessor(project(":tracing_apt")) {
 		exclude("org.junit")
