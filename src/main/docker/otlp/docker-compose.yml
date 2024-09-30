@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   fluentd:
     image: fluent/fluentd-kubernetes-daemonset:v1-debian-elasticsearch
@@ -41,12 +43,24 @@ services:
       - pgadmin:/var/lib/pgadmin
     depends_on:
       - postgres
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:v1.8.2
+    container_name: node_exporter
+    ports:
+      - "9100:9100"
+    command:
+      - '--path.rootfs=/host'
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
   collector:
     image: otel/opentelemetry-collector
     container_name: otlp-collector
     ports:
-      - 4317:4317
-      - 4318:4318
+      - "4317:4317"
+      - "4318:4318"
     volumes:
       - ./collector-config.yml:/etc/otelcol/config.yaml
     networks:
