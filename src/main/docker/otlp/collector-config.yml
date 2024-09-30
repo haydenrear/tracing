@@ -7,9 +7,9 @@ exporters:
   debug:
     verbosity: detailed
   otlp/jaeger:
-    endpoint: "jaeger-container:4317"  # Replace with your Jaeger endpoint
+    endpoint: "jaeger-container:4317"
     tls:
-      insecure: true   # Optional, if Jaeger doesn't use TLS
+      insecure: true
   logging:
     verbosity: detailed
 service:
