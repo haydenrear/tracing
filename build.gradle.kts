@@ -20,6 +20,7 @@ tasks.register("prepareKotlinBuildScriptModel")
 
 val vC = project.extensions.getByType(BuildSrcVersionCatalogCollector::class.java)
 
+
 dependencies {
 
 	vC.bundles.opentelemetryBundle.inBundle()
