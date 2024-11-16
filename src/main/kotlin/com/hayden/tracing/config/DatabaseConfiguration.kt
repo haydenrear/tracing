@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
+import org.springframework.context.annotation.Profile
 import org.springframework.core.convert.ConversionService
 import org.springframework.core.convert.converter.Converter
 import org.springframework.core.convert.converter.ConverterRegistry
@@ -40,6 +41,7 @@ import javax.sql.DataSource
         DataSourceAutoConfiguration::class
 ])
 @EnableConfigurationProperties
+@Profile("telemetry-logging")
 @EnableJdbcRepositories(basePackageClasses = [EventRepository::class])
 open class DatabaseConfiguration {
 

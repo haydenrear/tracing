@@ -6,11 +6,13 @@ import io.opentelemetry.sdk.resources.Resource
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.context.annotation.*
 import java.util.*
 
 
-@Configuration
+@AutoConfiguration
+@Profile("telemetry-logging")
 open class TracingResourceConfiguration {
 
     companion object {

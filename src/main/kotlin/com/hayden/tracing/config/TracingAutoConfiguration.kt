@@ -43,6 +43,7 @@ import org.yaml.snakeyaml.Yaml
     ],
     basePackages = ["com.hayden.tracing"]
 )
+@Profile("telemetry-logging")
 @PropertySource(value = ["classpath:application.yml"], factory = YamlPropertySourceFactory::class)
 open class TracingAutoConfiguration {
 
