@@ -47,14 +47,6 @@ dependencies {
 }
 
 
-tasks.withType<KotlinCompile> {
-	dependsOn("copyAgent")
-	kotlinOptions {
-		freeCompilerArgs += "-Xjsr305=strict"
-		jvmTarget = "21"
-	}
-}
-
 tasks.withType<JavaExec> {
 	dependsOn("copyAgent")
 	dependsOn("dynamicTracingAgent")

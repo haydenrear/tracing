@@ -65,7 +65,7 @@ open class TracingApplicationTests {
 
 	@WithSpan(value = "call-this")
 	public open fun callThis() {
-		val s: SpanBuilder
+//		val s: SpanBuilder
 	}
 
 }
