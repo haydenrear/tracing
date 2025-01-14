@@ -1,0 +1,61 @@
+metrics-pipeline:
+  source:
+    otel_metrics_source:
+      ssl: false
+      port: 4901
+  processor:
+    - otel_metrics:
+  sink:
+    - opensearch:
+        hosts: [ "http://opensearch:9200" ]
+        username: "admin"
+        password: "WowThisIsSoStupid1234*"
+        insecure: true
+        index: metrics-%{yyyy.MM.dd}
+
+otel-logs-pipeline:
+  source:
+    otel_logs_source:
+      ssl: false
+      port: 4902
+  buffer:
+    bounded_blocking:
+  sink:
+    - opensearch:
+        hosts: ["opensearch:9200"]
+        username: "admin"
+        password: "WowThisIsSoStupid1234*"
+        insecure: true
+        index_type: custom
+        index: otel-events-%{yyyy.MM.dd}
+        bulk_size: 4
+
+entry-pipeline:
+  source:
+    otel_trace_source:
+      ssl: false
+      port: 4909
+  processor:
+    - otel_traces:
+  sink:
+    - pipeline:
+        name: "trace-normal-pipeline"
+trace-normal-pipeline:
+  source:
+    pipeline:
+      name: "entry-pipeline"
+  processor:
+    - aggregate:
+        identification_keys: ["serviceName", "traceId"]
+        action:
+          percent_sampler:
+            percent: 99
+#        group_duration: "30s"
+#        aggregate_when: "/status_code != 2 and /durationInNanos <= 1000000000"
+  sink:
+    - opensearch:
+        hosts: ["opensearch:9200"]
+        username: "admin"
+        password: "WowThisIsSoStupid1234*"
+        insecure: true
+        index: sampled-traces

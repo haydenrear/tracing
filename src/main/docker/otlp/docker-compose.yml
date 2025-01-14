@@ -1,15 +1,55 @@
 version: '3.8'
 
 services:
-  fluentd:
-    image: fluent/fluentd-kubernetes-daemonset:v1-debian-elasticsearch
-    container_name: fluentd-container
+  opensearch-dashboard:
+    image: opensearchproject/opensearch-dashboards:latest # Make sure the version of opensearch-dashboards matches the version of opensearch installed on other nodes
+    container_name: opensearch-dashboard
     ports:
-      - "24224:24224"
-    volumes:
-      - ./fluentd-config.conf:/fluentd/etc/fluentd.conf
+      - "5601:5601" # Map host port 5601 to container port 5601
+    environment:
+      OPENSEARCH_HOSTS: '["http://opensearch:9200"]' # Define the OpenSearch nodes that OpenSearch Dashboards will query
     networks:
       - tracing-integration
+  dataprepper:
+    image:  opensearchproject/data-prepper:latest
+    container_name: data-prepper
+    ports:
+      - "4900:4900"
+      - "4901:4901"
+      - "4902:4902"
+      - "4909:4909"
+    volumes:
+      - ./data-prepper-pipeline.yml:/usr/share/data-prepper/pipelines/pipelines.yaml
+    networks:
+      - tracing-integration
+  opensearch:
+    image: opensearchproject/opensearch:latest
+    container_name: opensearch
+    environment:
+      plugins.security.ssl.http.enabled: false
+      discovery.type: single-node
+      plugins.query.datasources.encryption.masterkey: ef9d1bb9893b1462ab21c75b
+      cluster.name: opensearch-cluster
+      node.name: opensearch
+      bootstrap.memory_lock: true
+      OPENSEARCH_JAVA_OPTS: -Xms512m -Xmx512m
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: WowThisIsSoStupid1234*
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - tracing-integration
+#  fluentd:
+#    image: fluent/fluentd-kubernetes-daemonset:v1-debian-elasticsearch
+#    container_name: fluentd-container
+#    ports:
+#      - "24224:24224"
+#    volumes:
+#      - ./fluentd-config.conf:/fluentd/etc/fluentd.conf
+#    networks:
+#      - tracing-integration
   fluentbit:
     image: fluent/fluent-bit:3.1.9
     container_name: fluentbit-container
@@ -54,7 +94,7 @@ services:
     pid: host
     restart: unless-stopped
     volumes:
-      - '/:/host:ro,rslave'
+      - '/:/host:ro'
   collector:
     image: otel/opentelemetry-collector
     container_name: otlp-collector
@@ -85,3 +125,4 @@ networks:
 volumes:
   postgres:
   pgadmin:
+  opensearch-data:

@@ -10,16 +10,27 @@ exporters:
     endpoint: "jaeger-container:4317"
     tls:
       insecure: true
-  logging:
-    verbosity: detailed
+  otlp/metrics:
+    endpoint: "data-prepper:4901"
+    tls:
+      insecure: true
+  otlp/traces:
+    endpoint: "data-prepper:4909"
+    tls:
+      insecure: true
+  otlp/logs:
+    endpoint: "data-prepper:4902"
+    tls:
+      insecure: true
 service:
   pipelines:
     traces:
       receivers: [ otlp ]
-      exporters: [ debug, otlp/jaeger ]
+      exporters: [ otlp/jaeger, otlp/traces ]
     logs:
       receivers: [ otlp ]
-      exporters: [ debug ]
+      exporters: [ otlp/logs ]
     metrics:
       receivers: [ otlp ]
-      exporters: [ debug ]
+      exporters: [ otlp/metrics ]
+
