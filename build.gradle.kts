@@ -6,7 +6,6 @@ plugins {
 	id("com.hayden.kotlin")
 	id("com.hayden.observable-app")
 	id("com.hayden.docker-compose")
-	id("com.hayden.jdbc-persistence")
 	id("com.hayden.aop")
 	id("com.hayden.templating")
 	id("com.hayden.spring-app")

@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  fluentbit:
+    image: fluent/fluent-bit:3.1.9
+    container_name: fluentbit-container
+    ports:
+      - "24225:24225"
+      - "8888:8888"
+      - "8889:8889"
+    volumes:
+      - ./fluentbit-config.conf:/fluent-bit/etc/fluent-bit.conf
+    networks:
+      - tracing-integration
+  postgres:
+    image: localhost:5001/postgres-pgvector
+    container_name: int-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  collector:
+    image: otel/opentelemetry-collector
+    container_name: otlp-collector
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    volumes:
+      - ./collector-config.yml:/etc/otelcol/config.yaml
+    networks:
+     - tracing-integration
+  jaeger:
+    image: jaegertracing/all-in-one:1.61.0
+    container_name: jaeger-container
+    ports:
+      - "16686:16686"
+      - "14250:14250"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "14268:14268"
+      - "14269:14269"
+      - "9411:9411"
+    networks:
+      - tracing-integration
+
+networks:
+  tracing-integration:
+volumes:
+  postgres:
+  pgadmin:
+  opensearch-data:

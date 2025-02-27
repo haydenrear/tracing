@@ -8,39 +8,39 @@ micrometer.tracing.propagation.enabled: otel  # Choose otel for OTEL propagator
 trace:
   service-id: tracer
   service-instance-id: tracer-instance
-spring:
-  aop:
-    proxy-target-class: true
-    auto: true
-  docker:
-    compose:
-      skip:
-        in-tests: false
-      file: src/main/docker/integration_test/docker-compose.yml
-      lifecycle-management: start_only
-      readiness:
-        wait: never
+#spring:
+#  aop:
+#    proxy-target-class: true
+#    auto: true
+#  docker:
+#    compose:
+#      skip:
+#        in-tests: false
+#      file: src/main/docker/integration_test/docker-compose.yml
+#      lifecycle-management: start_only
+#      readiness:
+#        wait: never
 
-  data:
-    jdbc:
-      repositories:
-        enabled: true
-  datasource:
-    username: postgres
-    password: postgres
-    url: jdbc:postgresql://localhost:5432/postgres
-    jdbc-url: jdbc:postgresql://localhost:5432/postgres
-    hikari:
-      username: postgres
-      password: postgres
-      jdbc-url: jdbc:postgresql://localhost:5432/postgres
-      driver-class-name: org.postgresql.Driver
-    driver-class-name: org.postgresql.Driver
-  liquibase:
-    enabled: true
-    url: jdbc:postgresql://localhost:5432/postgres
-    user: postgres
-    password: postgres
+#  data:
+#    jdbc:
+#      repositories:
+#        enabled: true
+#  datasource:
+#    username: postgres
+#    password: postgres
+#    url: jdbc:postgresql://localhost:5432/postgres
+#    jdbc-url: jdbc:postgresql://localhost:5432/postgres
+#    hikari:
+#      username: postgres
+#      password: postgres
+#      jdbc-url: jdbc:postgresql://localhost:5432/postgres
+#      driver-class-name: org.postgresql.Driver
+#    driver-class-name: org.postgresql.Driver
+#  liquibase:
+#    enabled: true
+#    url: jdbc:postgresql://localhost:5432/postgres
+#    user: postgres
+#    password: postgres
 
 
 
@@ -48,23 +48,23 @@ spring:
 
 #scanning.observability.aspect: "* *.*.*"
 logging.level.org.springframework.aop: DEBUG
-management:
-  otlp:
-    tracing:
-      endpoint: http://localhost:4318
-    metrics:
-      export:
-        url: http://localhost:24225
+#management:
+#  otlp:
+#    tracing:
+#      endpoint: http://localhost:4318
+#    metrics:
+#      export:
+#        url: http://localhost:24225
 
 tracing-agent:
   size: 10
 
-otel:
-  exporter:
-    otlp:
-      logs:
-        endpoint: http://localhost:24225
-      metrics:
-        endpoint: http://localhost:24225
-      traces:
-        endpoint: http://localhost:4318/v1/traces
+#otel:
+#  exporter:
+#    otlp:
+#      logs:
+#        endpoint: http://localhost:24225
+#      metrics:
+#        endpoint: http://localhost:24225
+#      traces:
+#        endpoint: http://localhost:4318/v1/traces

@@ -6,23 +6,14 @@ import com.hayden.tracing_apt.observation_aspects.DiObservationUtility
 import com.hayden.tracing_apt.props.TracingConfigurationProperties
 import com.hayden.utilitymodule.nullable.mapNullable
 import com.hayden.utilitymodule.nullable.orElseGet
-import io.micrometer.tracing.otel.bridge.OtelTracer
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.exporter.logging.LoggingSpanExporter
-import io.opentelemetry.sdk.OpenTelemetrySdk
-import io.opentelemetry.sdk.OpenTelemetrySdkBuilder
-import io.opentelemetry.sdk.trace.SdkTracerProvider
 import io.opentelemetry.sdk.trace.samplers.Sampler
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.AutoConfiguration
-import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
 import org.springframework.context.annotation.*
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
-import org.springframework.data.jdbc.core.convert.*
-import org.springframework.data.jdbc.core.mapping.JdbcMappingContext
-import org.springframework.data.relational.core.dialect.Dialect
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
 import org.yaml.snakeyaml.Yaml
 
 
@@ -30,16 +21,13 @@ import org.yaml.snakeyaml.Yaml
 @Import(value=[
     org.springframework.boot.actuate.autoconfigure.tracing.OpenTelemetryAutoConfiguration::class,
     io.opentelemetry.instrumentation.spring.autoconfigure.OpenTelemetryAutoConfiguration::class,
-    DatabaseConfiguration::class,
-    LiquibaseAutoConfiguration::class,
     TracingResourceConfiguration::class
 ])
 @ComponentScan(
     basePackageClasses = [
         DiObservationUtility::class,
         AnnotationRegistrarObservabilityUtility::class,
-        DelegatingCdcObservationHandler::class,
-        JdbcAnnotationConverter::class
+        DelegatingCdcObservationHandler::class
     ],
     basePackages = ["com.hayden.tracing"]
 )
@@ -49,24 +37,6 @@ open class TracingAutoConfiguration {
 
     companion object {
         val log: Logger = LoggerFactory.getLogger(TracingAutoConfiguration::class.java.name)
-    }
-
-    @Bean
-    @Primary
-    open fun dataAccessStrategy(operations: NamedParameterJdbcOperations,
-                                jdbcConverter: JdbcConverter,
-                                context: JdbcMappingContext,
-                                dialect: Dialect): DataAccessStrategy {
-        val sqlGeneratorSource = SqlGeneratorSource(context,
-            jdbcConverter, dialect)
-        val factory  = DataAccessStrategyFactory(
-            sqlGeneratorSource,
-            jdbcConverter,
-            operations,
-            SqlParametersFactoryImpl(context, jdbcConverter),
-            InsertStrategyFactory(operations, dialect))
-
-        return factory.create()
     }
 
     @Bean
