@@ -1,6 +1,5 @@
 package com.hayden.tracing.config
 
-import com.hayden.tracing.handler.DelegatingCdcObservationHandler
 import com.hayden.tracing_apt.observation_aspects.AnnotationRegistrarObservabilityUtility
 import com.hayden.tracing_apt.observation_aspects.DiObservationUtility
 import com.hayden.tracing_apt.props.TracingConfigurationProperties
@@ -26,8 +25,7 @@ import org.yaml.snakeyaml.Yaml
 @ComponentScan(
     basePackageClasses = [
         DiObservationUtility::class,
-        AnnotationRegistrarObservabilityUtility::class,
-        DelegatingCdcObservationHandler::class
+        AnnotationRegistrarObservabilityUtility::class
     ],
     basePackages = ["com.hayden.tracing"]
 )
