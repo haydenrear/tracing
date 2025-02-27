@@ -44,11 +44,6 @@ open class TracingAutoConfiguration {
     }
 
     @Bean
-    open fun loggingSpanExporter(): LoggingSpanExporter {
-        return LoggingSpanExporter.create()
-    }
-
-    @Bean
     open fun tracingConfigPropertiesAttributes(tracingConfigurationProperties: TracingConfigurationProperties?): Attributes
         = tracingConfigurationProperties
             .mapNullable { attrs(it) }

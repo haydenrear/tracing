@@ -11,5 +11,6 @@ public @interface TraceMethodCall {
 
     String startEvent() default "";
     String endEvent() default "";
+    String[] tags() default {};
 
 }
