@@ -1,12 +1,11 @@
 package com.hayden.tracing.config
 
-import com.hayden.tracing_apt.observation_aspects.AnnotationRegistrarObservabilityUtility
-import com.hayden.tracing_apt.observation_aspects.DiObservationUtility
-import com.hayden.tracing_apt.props.TracingConfigurationProperties
+import com.hayden.tracing_aspect.observation_aspects.AnnotationRegistrarObservabilityUtility
+import com.hayden.tracing_aspect.observation_aspects.DiObservationUtility
+import com.hayden.tracing_aspect.props.TracingConfigurationProperties
 import com.hayden.utilitymodule.nullable.mapNullable
 import com.hayden.utilitymodule.nullable.orElseGet
 import io.opentelemetry.api.common.Attributes
-import io.opentelemetry.exporter.logging.LoggingSpanExporter
 import io.opentelemetry.sdk.trace.samplers.Sampler
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
