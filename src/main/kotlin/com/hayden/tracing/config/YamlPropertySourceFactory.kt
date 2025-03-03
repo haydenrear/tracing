@@ -1,7 +1,6 @@
 package com.hayden.tracing.config
 
 import com.hayden.utilitymodule.nullable.mapNullable
-import com.hayden.utilitymodule.nullable.or
 import com.hayden.utilitymodule.nullable.orElseGet
 import jakarta.annotation.Nullable
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean
