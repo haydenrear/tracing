@@ -32,17 +32,15 @@ dependencies {
 	implementation(project(":utilitymodule"))
 	implementation(project(":tracing_agent"))
 
-
-
-	annotationProcessor(project(":tracing_apt")) {
-		exclude("org.junit")
-	}
-	testAnnotationProcessor(project(":tracing_apt")) {
-		exclude("org.junit")
-	}
-	api(project(":tracing_apt")) {
-		exclude("org.junit")
-	}
+//	annotationProcessor(project(":tracing_apt")) {
+//		exclude("org.junit")
+//	}
+//	testAnnotationProcessor(project(":tracing_apt")) {
+//		exclude("org.junit")
+//	}
+//	api(project(":tracing_apt")) {
+//		exclude("org.junit")
+//	}
 }
 
 
