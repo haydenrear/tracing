@@ -1,5 +1,4 @@
 import com.hayden.haydenbomplugin.BuildSrcVersionCatalogCollector
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
 	id("com.hayden.no-main-class")
@@ -12,8 +11,6 @@ plugins {
 	id("com.hayden.web-app")
 	id("net.bytebuddy.byte-buddy-gradle-plugin") version "1.14.17"
 }
-
-
 
 tasks.register("prepareKotlinBuildScriptModel")
 
