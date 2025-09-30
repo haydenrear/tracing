@@ -17,8 +17,7 @@ import org.yaml.snakeyaml.Yaml
 
 @AutoConfiguration
 @Import(value=[
-    org.springframework.boot.actuate.autoconfigure.tracing.OpenTelemetryAutoConfiguration::class,
-    io.opentelemetry.instrumentation.spring.autoconfigure.OpenTelemetryAutoConfiguration::class,
+    org.springframework.boot.actuate.autoconfigure.tracing.OpenTelemetryTracingAutoConfiguration::class,
     TracingResourceConfiguration::class
 ])
 @ComponentScan(

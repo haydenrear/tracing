@@ -9,7 +9,8 @@ import org.springframework.context.annotation.Profile
 @ImportAutoConfiguration(
     exclude = [
         OpenTelemetryAutoConfiguration::class,
-        org.springframework.boot.actuate.autoconfigure.tracing.OpenTelemetryAutoConfiguration::class, TracingAutoConfiguration::class]
+        org.springframework.boot.actuate.autoconfigure.tracing.OpenTelemetryTracingAutoConfiguration::class,
+        TracingAutoConfiguration::class]
 )
 @Profile("!telemetry-logging")
 open class DisableTelemetryLoggingConfig

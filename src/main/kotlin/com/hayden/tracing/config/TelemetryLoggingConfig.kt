@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Profile
 
 @Configuration
 @Import(LoggingConfig::class)
-@ComponentScan(basePackages = ["com.hayden.tracing", "com.hayden.tracing_apt.props"], basePackageClasses = [TelemetryAttributes::class])
+@ComponentScan(basePackages = ["com.hayden.tracing"], basePackageClasses = [TelemetryAttributes::class])
 @Profile("telemetry-logging")
 open class TelemetryLoggingConfig
