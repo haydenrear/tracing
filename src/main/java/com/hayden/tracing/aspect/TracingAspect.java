@@ -60,6 +60,8 @@ public class TracingAspect {
     private static void doEndSpan(TraceMethodCall traceMethodCall, Span span, String name) {
         if (!StringUtils.isBlank(traceMethodCall.endEvent())) {
             span = span.addEvent(traceMethodCall.endEvent());
+        } else if (!StringUtils.isBlank(traceMethodCall.startEvent())) {
+            span = span.addEvent(traceMethodCall.startEvent());
         }
 
         span.addEvent("end%s".formatted(name), Instant.now())
