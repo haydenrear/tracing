@@ -62,7 +62,7 @@ services:
     networks:
       - tracing-integration
   postgres:
-    image: localhost:5001/postgres-pgvector
+    image: localhost:5005/postgres-pgvector
     container_name: int-postgres
     environment:
       POSTGRES_USER: postgres
