@@ -18,12 +18,9 @@ open class YamlPropertySourceFactory : PropertySourceFactory {
                 )
             }
             .orElseGet {
-                println("Looking for application.yml...")
                 PropertiesPropertySource(
                     "application.yml",
                     YamlPropertiesFactoryBean().also {
-                        println("Found properties factory bean...")
-                        println(encodedResource.resource.inputStream.use { it.reader().use { reader -> reader.readText() } }.toString())
                         it.setResources(encodedResource.resource)
                     }.getObject()!!
                 )
