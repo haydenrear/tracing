@@ -6,17 +6,20 @@ import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Aspect
 @Component
 public class TracingAspect {
@@ -28,6 +31,8 @@ public class TracingAspect {
 
     @Around("@annotation(traceMethodCall)")
     public Object around(ProceedingJoinPoint joinPoint, TraceMethodCall traceMethodCall) throws Throwable {
+        StopWatch stopwatch = new StopWatch();
+        stopwatch.start();
 
         var args = ParameterAnnotationUtils.retrieveArgsIndex(joinPoint, TraceArg.class)
                 .stream().map(i -> {
@@ -49,6 +54,11 @@ public class TracingAspect {
             span.recordException(e);
             doEndSpan(traceMethodCall, span, name);
             throw e;
+        } finally {
+            stopwatch.stop();
+            if (stopwatch.getTotalTimeMillis() > 300000) {
+                log.info("Stopped {}, {}", traceMethodCall.startEvent(), stopwatch.prettyPrint());
+            }
         }
 
         doEndSpan(traceMethodCall, span, name);
