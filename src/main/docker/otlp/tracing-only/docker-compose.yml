@@ -10,16 +10,16 @@ services:
       - ./fluentbit-config.conf:/fluent-bit/etc/fluent-bit.conf
     networks:
       - tracing-integration
-  postgres:
-    image: localhost:5005/postgres-pgvector
-    container_name: int-postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - tracing-postgres:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+#  postgres:
+#    image: localhost:5005/postgres-pgvector
+#    container_name: int-postgres
+#    environment:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: postgres
+#    volumes:
+#      - tracing-postgres:/var/lib/postgresql/data
+#    ports:
+#      - "5432:5432"
   collector:
     image: otel/opentelemetry-collector
     container_name: otlp-collector
