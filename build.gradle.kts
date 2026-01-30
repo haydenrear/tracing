@@ -16,6 +16,13 @@ tasks.register("prepareKotlinBuildScriptModel")
 
 val vC = project.extensions.getByType(BuildSrcVersionCatalogCollector::class.java)
 
+var utilLib = ""
+
+if (project.parent?.name?.contains("multi_agent_ide_parent") ?: false) {
+	utilLib = ":multi_agent_ide_java_parent"
+} else {
+	utilLib = ""
+}
 
 dependencies {
 
@@ -26,7 +33,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1")
 
-	implementation(project(":utilitymodule"))
+	implementation(project("${utilLib}:utilitymodule"))
 	implementation(project(":tracing_agent"))
 
 //	annotationProcessor(project(":tracing_apt")) {
